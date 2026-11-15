@@ -1,0 +1,1102 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>六级练习室 | CET-6 Practice</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172b3a;
+      --muted: #71808d;
+      --line: #e5e9e8;
+      --paper: #ffffff;
+      --canvas: #f5f7f6;
+      --green: #13866e;
+      --green-dark: #0d6b58;
+      --green-pale: #e9f5f1;
+      --amber: #d08a21;
+      --amber-pale: #fff5df;
+      --red: #c5504c;
+      --shadow: 0 8px 28px rgba(25, 52, 67, .06);
+      font-family: Inter, "Segoe UI", "Microsoft YaHei", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--canvas); color: var(--ink); font-size: 14px; }
+    button { font: inherit; cursor: pointer; }
+    button:focus-visible, [tabindex]:focus-visible { outline: 3px solid #93d7c4; outline-offset: 2px; }
+    .topbar {
+      height: 64px; background: #fff; border-bottom: 1px solid var(--line);
+      display: flex; align-items: center; justify-content: space-between; padding: 0 30px;
+      position: sticky; top: 0; z-index: 10;
+    }
+    .brand { display: flex; gap: 11px; align-items: center; font-weight: 750; font-size: 16px; letter-spacing: 0; }
+    .brand-mark { width: 31px; height: 31px; border-radius: 8px; background: var(--green); color: white; display: grid; place-items: center; font-size: 13px; font-weight: 800; }
+    .brand small { display: block; margin-top: 2px; font-size: 10px; color: #91a09e; font-weight: 600; letter-spacing: .4px; }
+    .top-right { display: flex; align-items: center; gap: 22px; color: var(--muted); }
+    .top-link { border: 0; color: inherit; background: transparent; padding: 8px 0; }
+    .top-link:hover { color: var(--green); }
+    .user { display: flex; align-items: center; gap: 8px; color: var(--ink); font-weight: 600; }
+    .avatar { width: 30px; height: 30px; border-radius: 50%; color: #0e6e59; background: #dff1eb; display: grid; place-items: center; font-size: 12px; }
+    .layout { min-height: calc(100vh - 64px); display: grid; grid-template-columns: 218px minmax(0, 1fr); }
+    aside { background: #fff; border-right: 1px solid var(--line); padding: 22px 14px; }
+    .side-label { color: #a0aaa9; font-size: 10px; font-weight: 750; letter-spacing: 1px; padding: 10px 12px 8px; }
+    .nav-item { width: 100%; display: flex; gap: 11px; align-items: center; padding: 11px 12px; margin: 2px 0; color: #667680; border: 0; border-radius: 5px; background: transparent; text-align: left; }
+    .nav-item.active { background: var(--green-pale); color: var(--green-dark); font-weight: 700; }
+    .nav-icon { width: 18px; text-align: center; font-size: 15px; }
+    .side-rule { border-top: 1px solid #edf0ef; margin: 17px 4px; }
+    .side-note { margin: 28px 7px 0; padding: 14px 12px; border-left: 2px solid #acd9ca; color: #74837f; font-size: 12px; line-height: 1.7; }
+    main { padding: 27px 32px 52px; min-width: 0; }
+    .page-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 18px; margin: 0 auto 21px; max-width: 1160px; }
+    .crumb { color: #99a4a8; font-size: 12px; margin-bottom: 9px; }
+    h1 { margin: 0; font-size: 23px; letter-spacing: 0; line-height: 1.3; }
+    .subtitle { margin-top: 7px; color: var(--muted); font-size: 13px; }
+    .head-actions { display: flex; gap: 9px; align-items: center; }
+    .btn { min-height: 36px; padding: 0 13px; border: 1px solid #dce3e0; background: #fff; color: #50616a; border-radius: 4px; font-weight: 650; }
+    .btn:hover { border-color: #a7cfc1; color: var(--green-dark); }
+    .btn-primary { border-color: var(--green); color: #fff; background: var(--green); }
+    .btn-primary:hover { color: white; background: var(--green-dark); }
+    .btn-danger { color: var(--red); border-color: #ecd2d1; }
+    .exam-strip { max-width: 1160px; margin: auto auto 16px; display: flex; align-items: center; justify-content: space-between; gap: 16px; background: #fff; border: 1px solid var(--line); border-radius: 5px; padding: 12px 17px; box-shadow: var(--shadow); }
+    .section-switcher { max-width: 1160px; margin: 0 auto 16px; display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; }
+    .section-choice { flex: 0 0 auto; min-height: 36px; padding: 0 12px; border: 1px solid #dce3e0; border-radius: 4px; background: #fff; color: #607078; font-weight: 650; white-space: nowrap; }
+    .section-choice:hover { border-color: #a7cfc1; color: var(--green-dark); }
+    .section-choice.active { border-color: var(--green); background: var(--green-pale); color: var(--green-dark); }
+    .paper-title { font-weight: 750; }
+    .paper-meta { color: var(--muted); font-size: 12px; margin-top: 5px; }
+    .strip-right { display: flex; align-items: center; gap: 22px; }
+    .timer { color: #344854; font-weight: 750; font-variant-numeric: tabular-nums; font-size: 16px; }
+    .timer-label { color: var(--muted); font-size: 11px; display: block; font-weight: 500; margin-bottom: 3px; }
+    .progress-box { width: 150px; }
+    .progress-copy { display: flex; justify-content: space-between; color: var(--muted); font-size: 11px; margin-bottom: 6px; }
+    .progress-track { height: 5px; background: #ecf0ee; border-radius: 8px; overflow: hidden; }
+    .progress-fill { height: 100%; width: 0; background: var(--green); transition: width .2s; }
+    .workspace { max-width: 1160px; margin: auto; display: grid; grid-template-columns: minmax(0, 1fr) 258px; gap: 16px; align-items: start; }
+    .main-column { min-width: 0; display: grid; gap: 14px; }
+    .panel { background: var(--paper); border: 1px solid var(--line); border-radius: 5px; box-shadow: var(--shadow); }
+    .panel-head { display: flex; align-items: center; justify-content: space-between; padding: 15px 19px; border-bottom: 1px solid #edf0ef; }
+    .panel-title { font-weight: 750; }
+    .panel-kicker { font-size: 11px; color: #94a0a2; }
+    .passage { padding: 18px 21px 21px; }
+    .passage h2 { font-size: 16px; margin: 0 0 6px; }
+    .passage-meta { color: #9aa5a5; font-size: 11px; margin-bottom: 16px; }
+    .pdf-controls { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 9px; color: var(--muted); font-size: 12px; }
+    .passage-text { color: #465862; font-family: Georgia, "Times New Roman", "Microsoft YaHei", serif; font-size: 15px; line-height: 2; }
+    .passage-text p { margin: 0 0 11px; }
+    .word { border-radius: 2px; cursor: pointer; transition: background .15s, color .15s; }
+    .word:hover { background: #edf6f2; color: var(--green-dark); }
+    .word.marked { color: #895b11; background: #fff0c9; box-shadow: inset 0 -1px #dfb958; }
+    .word-mark-hint { font-family: Inter, "Segoe UI", sans-serif; font-size: 11px; color: #9aa5a5; margin-top: 12px; }
+    .question-list { padding: 2px 19px 18px; }
+    .question { padding: 16px 0; border-bottom: 1px solid #edf0ef; }
+    .question:last-child { border-bottom: 0; padding-bottom: 2px; }
+    .q-title { display: flex; gap: 9px; align-items: flex-start; font-weight: 650; line-height: 1.6; }
+    .q-num { width: 22px; height: 22px; flex: 0 0 22px; display: grid; place-items: center; background: #f0f4f2; color: #5e716b; border-radius: 3px; font-size: 11px; }
+    .options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 10px; margin: 12px 0 0 31px; }
+    .option { display: flex; gap: 8px; align-items: baseline; padding: 8px 9px; border: 1px solid #e8edeb; color: #63727b; border-radius: 3px; cursor: pointer; }
+    .option:hover { border-color: #a7cfc1; background: #f8fcfa; }
+    .option.selected { border-color: var(--green); background: #eff8f4; color: var(--green-dark); }
+    .option input { accent-color: var(--green); margin: 0; }
+    .side-panel { position: sticky; top: 81px; display: grid; gap: 14px; }
+    .side-content { padding: 14px 15px 16px; }
+    .section-tabs { display: flex; border-bottom: 1px solid #edf0ef; }
+    .section-tab { flex: 1; border: 0; border-bottom: 2px solid transparent; padding: 12px 4px 10px; background: transparent; color: #829097; font-weight: 650; font-size: 12px; }
+    .section-tab.active { color: var(--green-dark); border-bottom-color: var(--green); }
+    .question-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+    .q-jump { aspect-ratio: 1; border: 1px solid #e2e9e6; border-radius: 3px; color: #75838a; background: #fff; }
+    .q-jump.answered { color: var(--green-dark); border-color: #a9d6c8; background: #eff8f4; }
+    .q-jump.current { box-shadow: inset 0 0 0 1px var(--green); }
+    .legend { color: #879398; font-size: 11px; display: flex; gap: 12px; margin: 14px 0 0; }
+    .legend span { display: flex; gap: 5px; align-items: center; }
+    .dot { width: 8px; height: 8px; border: 1px solid #dae2de; border-radius: 2px; }
+    .dot.done { background: #d8eee6; border-color: #a9d6c8; }
+    .vocab-empty { color: #8e9a9e; text-align: center; padding: 21px 9px 15px; font-size: 12px; line-height: 1.7; }
+    .vocab-count { color: var(--amber); font-weight: 750; }
+    .vocab-preview { max-height: 185px; overflow: auto; }
+    .vocab-row { padding: 9px 0; display: flex; justify-content: space-between; gap: 8px; border-bottom: 1px solid #f0f2f1; }
+    .vocab-row:last-child { border-bottom: 0; }
+    .vocab-word { font-weight: 750; color: #755013; }
+    .vocab-meaning { color: #839095; font-size: 11px; margin-top: 3px; }
+    .remove-word { border: 0; background: none; color: #a4adae; padding: 2px 5px; align-self: start; }
+    .remove-word:hover { color: var(--red); }
+    .side-foot { margin-top: 11px; border-top: 1px solid #edf0ef; padding-top: 11px; display: flex; justify-content: space-between; align-items: center; color: #8b989b; font-size: 11px; }
+    .side-foot button { border: 0; background: transparent; color: var(--green); padding: 3px; font-weight: 650; }
+    .submit-row { max-width: 1160px; margin: 17px auto 0; display: flex; justify-content: flex-end; gap: 9px; }
+    .word-popover { position: fixed; z-index: 20; width: min(300px, calc(100vw - 24px)); padding: 14px 15px; border: 1px solid #dfe7e3; border-radius: 5px; background: #fff; box-shadow: 0 12px 34px rgba(22, 48, 58, .17); }
+    .popover-top { display: flex; justify-content: space-between; align-items: start; gap: 14px; }
+    .popover-word { font-weight: 800; font-size: 18px; }
+    .phonetic { color: #7a898e; font-size: 12px; margin-top: 3px; }
+    .popover-close { border: 0; background: transparent; color: #94a0a0; padding: 0 2px; font-size: 18px; }
+    .meaning { margin-top: 11px; line-height: 1.6; }
+    .synonyms { margin-top: 8px; color: #77858a; font-size: 12px; }
+    .popover-action { margin-top: 12px; width: 100%; }
+    .overlay { position: fixed; inset: 0; z-index: 30; display: grid; place-items: center; padding: 18px; background: rgba(17, 35, 44, .38); }
+    .modal { width: min(460px, 100%); background: #fff; border-radius: 6px; padding: 22px; box-shadow: 0 18px 55px rgba(13, 35, 44, .24); }
+    .modal h2 { font-size: 19px; margin: 0 0 8px; }
+    .modal p { color: #718087; line-height: 1.7; margin: 0 0 18px; }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 8px; }
+    .results { max-width: 1160px; margin: auto; display: grid; gap: 15px; }
+    .result-banner { background: #fff; border: 1px solid var(--line); padding: 24px; display: flex; align-items: center; gap: 21px; border-radius: 5px; }
+    .score-ring { width: 82px; height: 82px; flex: 0 0 82px; display: grid; place-items: center; border: 5px solid #b9dfd2; border-radius: 50%; color: var(--green-dark); font-weight: 800; font-size: 20px; }
+    .score-caption { font-size: 11px; color: #8a989c; margin-top: 3px; }
+    .result-copy h2 { margin: 0 0 6px; font-size: 19px; }
+    .result-copy p { color: #77858b; margin: 0; line-height: 1.6; }
+    .result-stats { margin-left: auto; display: flex; gap: 25px; color: #748188; }
+    .result-stats strong { color: var(--ink); display: block; font-size: 19px; margin-bottom: 3px; }
+    .review { display: grid; grid-template-columns: 1.2fr 1fr; gap: 15px; align-items: start; }
+    .review-list { padding: 16px 19px; }
+    .review-item { display: flex; align-items: center; justify-content: space-between; gap: 15px; padding: 10px 0; border-bottom: 1px solid #eff2f0; }
+    .review-item:last-child { border: 0; }
+    .review-status { font-size: 11px; color: #879398; }
+    .word-list { padding: 4px 18px 12px; }
+    .word-entry { padding: 13px 0; border-bottom: 1px solid #edf0ef; }
+    .word-entry:last-child { border: 0; }
+    .word-entry-head { display: flex; justify-content: space-between; gap: 10px; }
+    .word-entry strong { font-size: 16px; }
+    .word-entry .phonetic { display: inline; margin-left: 8px; }
+    .word-entry p { margin: 6px 0 0; color: #64747b; line-height: 1.55; }
+    .hidden { display: none !important; }
+    .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 50; background: #203a42; color: white; padding: 10px 15px; border-radius: 4px; box-shadow: var(--shadow); }
+    .catalog, .section-page { max-width: 1160px; margin: 0 auto; }
+    .catalog-tools { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .catalog-tools input, .catalog-tools select { height: 36px; border: 1px solid #dce3e0; border-radius: 4px; padding: 0 10px; color: #50616a; background: #fff; font: inherit; }
+    .catalog-tools input { min-width: 220px; }
+    .catalog-summary { display: flex; gap: 25px; padding: 17px 20px; border-bottom: 1px solid #edf0ef; color: #718087; }
+    .catalog-summary strong { display: block; color: var(--ink); font-size: 19px; margin-bottom: 3px; }
+    .catalog-row { display: grid; grid-template-columns: minmax(0, 1fr) 150px 100px 100px; gap: 14px; align-items: center; padding: 15px 19px; border-bottom: 1px solid #edf0ef; }
+    .catalog-row:last-child { border-bottom: 0; }
+    .catalog-name { font-weight: 700; }
+    .catalog-meta { color: #89969a; font-size: 12px; margin-top: 5px; }
+    .catalog-tag { color: #64756f; font-size: 12px; }
+    .catalog-empty { padding: 34px 20px; text-align: center; color: #849195; line-height: 1.8; }
+    .import-help { padding: 13px 18px; background: #f8faf9; border-top: 1px solid #edf0ef; color: #7c898e; font-size: 12px; line-height: 1.7; }
+    .section-hero { margin-bottom: 18px; }
+    .section-hero p { color: var(--muted); }
+    .section-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; }
+    .section-stat { padding: 18px; border-bottom: 1px solid var(--line); background: #fff; }
+    .section-stat strong { display: block; font-size: 21px; margin-bottom: 5px; }
+    .section-stat span { color: #829096; font-size: 12px; }
+    .history-row { padding: 13px 18px; display:flex; justify-content:space-between; gap:12px; border-bottom:1px solid #edf0ef; align-items:center; }
+    .history-row:last-child { border-bottom:0; }
+    .section-empty { padding: 28px 18px; color: #879397; text-align:center; }
+    .write-answer { width:100%; min-height:130px; margin:12px 0 0 31px; max-width:calc(100% - 31px); padding:10px; resize:vertical; border:1px solid #dce3e0; border-radius:3px; font:inherit; line-height:1.6; }
+    @media (max-width: 960px) {
+      .layout { grid-template-columns: 66px minmax(0, 1fr); }
+      aside { padding: 17px 8px; }
+      .nav-item { justify-content: center; padding: 11px 4px; font-size: 0; }
+      .nav-icon { font-size: 16px; }
+      .side-label, .side-note, .side-rule { display: none; }
+      main { padding: 23px 18px 42px; }
+      .workspace { grid-template-columns: minmax(0, 1fr) 228px; }
+    }
+    @media (max-width: 700px) {
+      .topbar { padding: 0 15px; }
+      .top-right { gap: 11px; }
+      .top-link { display: none; }
+      .layout { display: block; }
+      aside { display: flex; gap: 4px; position: sticky; top: 64px; z-index: 9; overflow-x: auto; padding: 5px 8px; border-right: 0; border-bottom: 1px solid var(--line); }
+      aside .side-label, aside .side-note, aside .side-rule { display: none; }
+      aside .nav-item { width: auto; min-width: max-content; flex: 0 0 auto; justify-content: flex-start; gap: 6px; padding: 8px 10px; font-size: 12px; }
+      aside .nav-icon { font-size: 14px; }
+      main { padding: 19px 13px 35px; }
+      .page-head { display: block; }
+      .head-actions { margin-top: 14px; }
+      .exam-strip { align-items: flex-start; padding: 12px; }
+      .section-switcher { margin-bottom: 12px; }
+      .strip-right { gap: 14px; }
+      .progress-box { display: none; }
+      .workspace { display: block; }
+      .side-panel { position: static; margin-top: 14px; }
+      .options { grid-template-columns: 1fr; }
+      .passage { padding: 16px; }
+      .passage-text { font-size: 14px; }
+      .panel-head { padding: 13px 15px; }
+      .result-banner { flex-wrap: wrap; padding: 18px; gap: 14px; }
+      .result-stats { width: 100%; margin-left: 0; justify-content: space-between; border-top: 1px solid #edf0ef; padding-top: 13px; }
+      .review { grid-template-columns: 1fr; }
+      .submit-row { margin-top: 13px; }
+      .catalog-row { grid-template-columns: minmax(0,1fr) auto; }
+      .catalog-row .catalog-tag, .catalog-row .catalog-questions { display: none; }
+      .section-grid { grid-template-columns: 1fr; }
+    }
+    .catalog-row .catalog-actions { display:flex; justify-content:flex-end; gap:7px; }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">6E</div>
+      <div>六级练习室<small>CET-6 PRACTICE</small></div>
+    </div>
+    <div class="top-right">
+      <button class="top-link" id="helpButton">练习说明</button>
+      <button class="top-link" id="resetButton">重新开始</button>
+      <div class="user"><div class="avatar">学</div><span>学习者</span></div>
+    </div>
+  </header>
+  <div class="layout">
+    <aside aria-label="主导航">
+      <div class="side-label">学习中心</div>
+      <button class="nav-item" data-view="overview"><span class="nav-icon">⌂</span>学习概览</button>
+      <button class="nav-item active" data-view="papers"><span class="nav-icon">▤</span>历年真题</button>
+      <button class="nav-item" data-view="mock"><span class="nav-icon">◷</span>模拟考试</button>
+      <button class="nav-item" data-view="history"><span class="nav-icon">▧</span>练习记录</button>
+      <div class="side-rule"></div>
+      <div class="side-label">词汇工具</div>
+      <button class="nav-item" data-view="vocabulary"><span class="nav-icon">Aa</span>我的生词本</button>
+      <button class="nav-item" data-view="review"><span class="nav-icon">✓</span>复习计划</button>
+      <div class="side-note">历年试卷按年份与考试批次整理。阅读时标记的生词会自动进入词汇库。</div>
+    </aside>
+    <main>
+      <div id="sectionView" class="hidden"></div>
+      <div id="catalogView" class="catalog hidden">
+        <div class="page-head">
+          <div><div class="crumb">学习中心　/　历年真题</div><h1>历年真题</h1><div class="subtitle">按考试年份和批次练习，提交后查看作答情况与答案解析。</div></div>
+          <div class="catalog-tools">
+            <select id="yearFilter" aria-label="按年份筛选"><option value="all">全部年份</option></select>
+            <input id="paperSearch" type="search" placeholder="搜索试卷">
+          </div>
+        </div>
+        <section class="panel">
+          <div class="catalog-summary"><div><strong id="paperTotal">0</strong>套试卷</div><div><strong id="attemptTotal">0</strong>次练习</div><div><strong id="vocabTotal">0</strong>个生词</div></div>
+          <div id="paperList"></div>
+          <div class="import-help">所有访客共用随网站发布的真题目录。原卷与答案文件可在线打开；答题记录和生词仅保存在当前浏览器。</div>
+        </section>
+      </div>
+      <div id="practiceView" class="hidden">
+        <div class="page-head">
+          <div>
+            <div class="crumb">学习中心　/　真题练习　/　阅读理解</div>
+            <h1>在线真题练习</h1>
+            <div class="subtitle">按考试节奏完成题目，随时标记不熟悉的词汇。</div>
+          </div>
+          <div class="head-actions">
+            <button class="btn" id="markAllHint" title="标记的词语将在交卷后汇总">词汇标注 <span style="color:#d08a21">●</span></button>
+            <button class="btn" id="pauseButton">暂停计时</button>
+          </div>
+        </div>
+        <section class="exam-strip">
+          <div>
+            <div class="paper-title">CET-6 阅读理解 · 练习卷 01</div>
+            <div class="paper-meta">选词填空与仔细阅读　·　共 5 题　·　建议用时 15 分钟</div>
+          </div>
+          <div class="strip-right">
+            <div><span class="timer-label">已用时间</span><span class="timer" id="timer">00:00</span></div>
+            <div class="progress-box">
+              <div class="progress-copy"><span>答题进度</span><span id="progressText">0 / 5</span></div>
+              <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+            </div>
+          </div>
+        </section>
+        <nav class="section-switcher" id="sectionSwitcher" aria-label="考试部分"></nav>
+        <div class="workspace">
+          <div class="main-column">
+            <section class="panel">
+              <div class="panel-head">
+                <span class="panel-title">仔细阅读 · Passage 1</span>
+                <span class="panel-kicker">原始试卷 PDF</span>
+              </div>
+              <div class="passage" id="paperViewer">
+                <h2 id="paperViewerTitle">原卷与原文</h2>
+                <div class="passage-meta" id="passageMeta"></div>
+                <div class="passage-text" id="passageText"></div>
+                <div class="word-mark-hint">点选英文单词可查看词义并加入本次生词表；下方可查看对应原卷页面。</div>
+                <div class="pdf-controls"><button class="btn" id="pdfPrev" aria-label="上一页">上一页</button><span id="pdfPageLabel"></span><button class="btn" id="pdfNext" aria-label="下一页">下一页</button></div>
+                <iframe id="paperFrame" title="CET-6 真题原卷" style="width:100%;height:min(72vh,900px);border:1px solid #e5e9e8"></iframe>
+              </div>
+            </section>
+            <section class="panel">
+              <div class="panel-head">
+                <span class="panel-title">选择题</span>
+                <span class="panel-kicker">每题 2 分</span>
+              </div>
+              <div class="question-list" id="questionList"></div>
+            </section>
+          </div>
+          <div class="side-panel">
+            <section class="panel">
+              <div class="section-tabs">
+                <button class="section-tab active" data-tab="questions">答题卡</button>
+                <button class="section-tab" data-tab="vocabulary">本次生词 <span class="vocab-count" id="vocabCount">0</span></button>
+              </div>
+              <div class="side-content" id="questionCard">
+                <div class="question-grid" id="questionGrid"></div>
+                <div class="legend"><span><i class="dot done"></i>已作答</span><span><i class="dot"></i>未作答</span></div>
+              </div>
+              <div class="side-content hidden" id="vocabCard">
+                <div id="vocabPreview" class="vocab-preview"></div>
+                <div class="side-foot"><span>交卷后生成完整词表</span><button id="exportVocab">导出词表</button></div>
+              </div>
+            </section>
+            <section class="panel">
+              <div class="panel-head"><span class="panel-title">练习信息</span></div>
+              <div class="side-content" style="color:#718087;line-height:1.9;font-size:12px">
+                <div>题型：仔细阅读</div>
+                <div>题目：5 道单选题</div>
+                <div>答题：<strong id="answeredCount" style="color:#253943">0 / 5</strong></div>
+                <div>标记词汇：<strong id="markedCount" style="color:#a87117">0 个</strong></div>
+              </div>
+            </section>
+          </div>
+        </div>
+        <div class="submit-row">
+          <button class="btn" id="previousSectionButton">上一部分</button>
+          <button class="btn" id="saveButton">暂存进度</button>
+          <button class="btn btn-primary" id="submitButton">提交本部分</button>
+        </div>
+      </div>
+      <div class="results hidden" id="resultsView"></div>
+    </main>
+  </div>
+  <div id="popover" class="word-popover hidden" role="dialog" aria-label="单词释义"></div>
+  <div id="modalHost"></div>
+  <div id="toast" class="toast hidden" role="status"></div>
+  <script>
+    const demoPassage = [
+      "In many cities, public parks are treated as pleasant extras rather than essential infrastructure. Yet a growing body of research suggests that even a modest green space can have a measurable effect on residents' health and sense of community.",
+      "One benefit is surprisingly simple: a nearby park gives people a reason to walk. Researchers have found that residents who live within a short distance of a well-maintained park are more likely to meet recommended activity levels. The effect is not automatic, however. Paths must be accessible, lighting must feel safe, and facilities should serve people of different ages.",
+      "Parks can also provide a quiet refuge from the constant stimulation of urban life. A brief pause beneath trees may help restore attention after a demanding task. This does not mean that every park needs elaborate landscaping. In several neighborhoods, residents have transformed vacant lots into small gardens with benches and native plants. These spaces are modest, but they offer something a busy street cannot: an opportunity to slow down and encounter neighbors.",
+      "The strongest projects tend to involve local people from the beginning. When planners consult residents, they are more likely to notice practical concerns, such as a lack of shade or a path that becomes slippery after rain. Community participation can also create a sense of shared responsibility. People who help shape a place often feel more inclined to care for it.",
+      "Small parks will not solve every urban problem, and they cannot replace investment in housing, transport, or public health. Still, treating them as part of a city's basic infrastructure may produce benefits that extend far beyond their boundaries."
+    ];
+    const words = {
+      infrastructure: { phonetic: "/ˌɪnfrəˈstrʌktʃər/", meaning: "基础设施；基础建设", synonyms: ["framework", "structure", "facilities"] },
+      modest: { phonetic: "/ˈmɑːdɪst/", meaning: "不太大的；适度的；谦逊的", synonyms: ["moderate", "limited", "humble"] },
+      measurable: { phonetic: "/ˈmeʒərəbl/", meaning: "可测量的；明显的", synonyms: ["quantifiable", "noticeable", "assessable"] },
+      residents: { phonetic: "/ˈrezɪdənts/", meaning: "居民；住户", synonyms: ["inhabitants", "locals", "citizens"] },
+      maintained: { phonetic: "/meɪnˈteɪnd/", meaning: "维护；保养（maintain 的过去分词）", synonyms: ["preserved", "kept", "sustained"] },
+      automatic: { phonetic: "/ˌɔːtəˈmætɪk/", meaning: "自动的；必然发生的", synonyms: ["mechanical", "inevitable", "unprompted"] },
+      accessible: { phonetic: "/əkˈsesəbl/", meaning: "易于到达的；可使用的", synonyms: ["reachable", "available", "approachable"] },
+      stimulation: { phonetic: "/ˌstɪmjəˈleɪʃn/", meaning: "刺激；激励", synonyms: ["excitation", "arousal", "encouragement"] },
+      restore: { phonetic: "/rɪˈstɔːr/", meaning: "恢复；使复原", synonyms: ["renew", "recover", "repair"] },
+      demanding: { phonetic: "/dɪˈmændɪŋ/", meaning: "要求高的；费力的", synonyms: ["challenging", "difficult", "taxing"] },
+      elaborate: { phonetic: "/ɪˈlæbərət/", meaning: "精心制作的；复杂的", synonyms: ["detailed", "complicated", "ornate"] },
+      vacant: { phonetic: "/ˈveɪkənt/", meaning: "空着的；未被占用的", synonyms: ["empty", "unoccupied", "available"] },
+      encounter: { phonetic: "/ɪnˈkaʊntər/", meaning: "遇到；邂逅；遭遇", synonyms: ["meet", "come across", "face"] },
+      consult: { phonetic: "/kənˈsʌlt/", meaning: "咨询；请教；查阅", synonyms: ["ask", "confer with", "seek advice"] },
+      practical: { phonetic: "/ˈpræktɪkl/", meaning: "实际的；实用的", synonyms: ["pragmatic", "realistic", "useful"] },
+      inclined: { phonetic: "/ɪnˈklaɪnd/", meaning: "倾向于……的；有意愿的", synonyms: ["disposed", "willing", "likely"] },
+      investment: { phonetic: "/ɪnˈvestmənt/", meaning: "投资；投入", synonyms: ["funding", "input", "commitment"] },
+      extend: { phonetic: "/ɪkˈstend/", meaning: "延伸；扩大；持续", synonyms: ["expand", "stretch", "continue"] },
+      boundaries: { phonetic: "/ˈbaʊndəriz/", meaning: "边界；范围；界限", synonyms: ["limits", "borders", "edges"] }
+    };
+    const demoQuestions = [
+      { id: 1, text: "What does the passage suggest about small urban parks?", options: ["They are mainly decorative additions.", "They can contribute to residents' well-being.", "They should be replaced by larger facilities.", "They benefit only people who exercise regularly."], answer: 1 },
+      { id: 2, text: "According to paragraph 2, what makes a park more likely to encourage physical activity?", options: ["A location far from busy neighborhoods.", "Facilities designed for young adults.", "Safe lighting and accessible paths.", "Expensive sports equipment."], answer: 2 },
+      { id: 3, text: "The word “refuge” in paragraph 3 is closest in meaning to:", options: ["a shelter from difficulty", "a source of entertainment", "a place for competition", "a sign of social status"], answer: 0 },
+      { id: 4, text: "Why does the author mention residents transforming vacant lots?", options: ["To argue that all cities need more gardens.", "To show that simple green spaces can still be valuable.", "To criticize professional landscape designers.", "To explain how urban land prices are calculated."], answer: 1 },
+      { id: 5, text: "What is the author's attitude toward small parks?", options: ["They are a complete solution to urban challenges.", "Their value depends entirely on elaborate design.", "They are useful but should complement other investments.", "Their benefits have been exaggerated by researchers."], answer: 2 }
+    ];
+    const papersKey = "cet6-paper-library-v2";
+    const historyKey = "cet6-attempt-history-v2";
+    let papers = [{
+      id: "demo-urban-parks",
+      title: "阅读理解示例练习",
+      year: "示例",
+      session: "仔细阅读",
+      source: "内置演示",
+      sections: [{ title: "仔细阅读 · Passage 1", type: "reading", passageTitle: "Why Small Urban Parks Matter", passage: demoPassage, questions: demoQuestions }]
+    }];
+    let activePaperId = "";
+    let activeSectionIndex = 0;
+    let passage = demoPassage;
+    let questions = demoQuestions;
+    let answers = {};
+    let sectionAnswers = {};
+    let markedWords = new Set();
+    let seconds = 0;
+    let timerRunning = true;
+    let submitted = false;
+    let completedResult = false;
+    let pdfPage = 1;
+    let timerInterval;
+    let toastTimeout;
+    const wordLookupCache = "cet6-word-lookup-v1";
+
+    const questionList = document.getElementById("questionList");
+    const questionGrid = document.getElementById("questionGrid");
+    const popover = document.getElementById("popover");
+    const passageEl = document.getElementById("passageText");
+
+    function escapeHtml(value) {
+      return String(value ?? "").replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
+    }
+    function activePaper() { return papers.find(paper => paper.id === activePaperId) || papers.find(paper => paper.id !== "demo-urban-parks") || papers[0]; }
+    function currentSection() { return activePaper()?.sections?.[activeSectionIndex] || null; }
+    function normalizePaper(raw, isStatic = false) {
+      const sections = Array.isArray(raw.sections) ? raw.sections : [];
+      if (!raw.title || !sections.length) throw new Error("试卷必须包含 title 和至少一个 sections 分区。");
+      return {
+        id: isStatic ? String(raw.id) : `paper-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        title: String(raw.title),
+        year: String(raw.year || "未注明年份"),
+        session: String(raw.session || raw.exam || "考试批次未注明"),
+        source: String(raw.source || "导入试卷"),
+        sourcePdf: raw.sourcePdf || "",
+        answerPdf: raw.answerPdf || "",
+        sections: sections.map((section, sectionIndex) => {
+          const normalizedQuestions = (section.questions || []).map((question, index) => {
+            const options = Array.isArray(question.options) ? question.options.map(option => {
+              const text = String(option);
+              const nextSection = /\s+(?:Then mark the corresponding letter\b|Section\s+[ABC]\s+Directions:|Part\s+IV\s+Translation\b|Passage\s+Two\s+Questions?\s+\d+\s+to\s+\d+|Questions?\s+\d+\s+to\s+\d+\s+are\s+based\b)[\s\S]*$/i;
+              return text.replace(nextSection, "").trim();
+            }) : [];
+            const displayNumber = Number(question.id ?? index + 1);
+            const hasWordBankPassage = section.type === "reading" && (section.passage || []).some(block => /ten blanks|word bank|___\s*26\s*___/i.test(String(block)));
+            const isWordBank = hasWordBankPassage && displayNumber >= 26 && displayNumber <= 35 && options.length >= 10;
+            const suppliedType = question.type || (options.length ? "choice" : "written");
+            const isBrokenChoice = !isWordBank && suppliedType === "choice" && (options.length !== 4 || options.some(option => !option || /^[,.;:]+$/.test(option)));
+            const type = isWordBank ? "word_bank" : isBrokenChoice ? "choice_input" : suppliedType;
+            const suppliedLabels = Array.isArray(question.optionLabels) ? question.optionLabels.map(String) : [];
+            const expectedLabels = type === "word_bank" || type === "matching" || type === "choice_input" || (section.type === "listening" && type === "choice") || (section.type === "reading" && type === "choice")
+              ? options.map((_, optionIndex) => String.fromCharCode(65 + optionIndex))
+              : suppliedLabels;
+            const answer = isBrokenChoice ? null : typeof question.answer === "number" && expectedLabels[question.answer]
+              ? expectedLabels[question.answer]
+              : question.answer;
+            return {
+              id: `s${sectionIndex + 1}-q${question.id ?? index + 1}`,
+              sourceId: displayNumber,
+              displayNumber,
+              sectionIndex,
+              text: isWordBank
+                ? `第 ${displayNumber} 空`
+                : String(question.text || question.prompt || "").replace(/\s+(?:Section\s+[ABC]\s+Directions:|Part\s+IV\s+Translation\b|Passage\s+Two\s+Questions?\s+\d+\s+to\s+\d+|Questions?\s+\d+\s+to\s+\d+\s+are\s+based\b)[\s\S]*$/i, "").trim(),
+              options,
+              wordBankWords: isWordBank ? options : [],
+              wordBankLabels: isWordBank ? options.map((_, optionIndex) => String.fromCharCode(65 + optionIndex)) : [],
+              optionLabels: expectedLabels.length ? expectedLabels : options.map((_, optionIndex) => String.fromCharCode(65 + optionIndex)),
+              answer,
+              answerStatus: isBrokenChoice ? "not_available" : (question.answerStatus || (question.answer !== undefined && question.answer !== null ? "verified" : "not_available")),
+              explanation: String(question.explanation || ""),
+              type
+            };
+          });
+          const passage = Array.isArray(section.passage) ? section.passage.map(String) : section.passage ? String(section.passage).split(/\n\s*\n/) : [];
+          return {
+            title: String(section.title || `Part ${sectionIndex + 1}`),
+            type: String(section.type || "reading"),
+            instructions: String(section.instructions || ""),
+            passageTitle: String(section.passageTitle || section.title || "试卷原文"),
+            passage,
+            prompt: String(section.prompt || ""),
+            page: Number(section.page || 1),
+            pageEnd: Number(section.pageEnd || section.page || 1),
+            sourcePdf: section.sourcePdf || raw.sourcePdf || "",
+            questions: normalizedQuestions
+          };
+        })
+      };
+    }
+    function allSections() { return activePaper()?.sections || []; }
+    function allQuestions() { return allSections().flatMap(section => section.questions || []); }
+    function sharedWordBank() { return currentSection()?.questions?.find(question => question.type === "word_bank")?.wordBankWords || []; }
+    function wordBankOptions(question, selectedLabel) {
+      const used = new Set(questions.filter(item => item.type === "word_bank" && item.id !== question.id)
+        .map(item => answers[item.id]).filter(Boolean));
+      const options = sharedWordBank();
+      const labels = options.map((_, index) => String.fromCharCode(65 + index));
+      return `<option value="">选择词库字母</option>${options.map((word, index) => {
+        const label = labels[index];
+        const disabled = used.has(label) && selectedLabel !== label;
+        return `<option value="${label}" ${selectedLabel === label ? "selected" : ""} ${disabled ? "disabled" : ""}>${label}. ${escapeHtml(word)}</option>`;
+      }).join("")}`;
+    }
+    function isCorrectAnswer(question, response) {
+      if (question.type === "matching" || question.type === "choice_input") {
+        return (response || "").toUpperCase() === question.answer;
+      }
+      return response === question.answer;
+    }
+    function answerIndex(question) {
+      if (typeof question.answer === "number") return question.answer;
+      if (typeof question.answer === "string" && /^[A-P]$/i.test(question.answer.trim())) {
+        const labels = question.optionLabels.length ? question.optionLabels : Array.from({ length: question.options.length }, (_, index) => String.fromCharCode(65 + index));
+        return labels.indexOf(question.answer.trim().toUpperCase());
+      }
+      return Number(question.answer);
+    }
+    function readArray(key) {
+      try { const value = JSON.parse(localStorage.getItem(key) || "[]"); return Array.isArray(value) ? value : []; }
+      catch { return []; }
+    }
+    function saveLibrary() { localStorage.setItem(papersKey, JSON.stringify(papers.filter(paper => !paper.id.startsWith("cet6-") && paper.id !== "demo-urban-parks"))); }
+    function renderCatalog() {
+      const catalogPapers = papers.filter(paper => paper.id !== "demo-urban-parks");
+      const years = [...new Set(catalogPapers.map(paper => paper.year))].sort((a,b) => b.localeCompare(a));
+      const filter = document.getElementById("yearFilter");
+      const selectedYear = filter.value;
+      filter.innerHTML = `<option value="all">全部年份</option>${years.map(year => `<option value="${escapeHtml(year)}">${escapeHtml(year)}</option>`).join("")}`;
+      if (years.includes(selectedYear)) filter.value = selectedYear;
+      const query = document.getElementById("paperSearch").value.trim().toLowerCase();
+      const visible = catalogPapers.filter(paper => (filter.value === "all" || paper.year === filter.value) &&
+        `${paper.title} ${paper.year} ${paper.session}`.toLowerCase().includes(query));
+      document.getElementById("paperTotal").textContent = catalogPapers.length;
+      document.getElementById("attemptTotal").textContent = readArray(historyKey).length;
+      document.getElementById("vocabTotal").textContent = markedWords.size;
+      const list = document.getElementById("paperList");
+      if (!visible.length) {
+        list.innerHTML = `<div class="catalog-empty">没有匹配的试卷。</div>`;
+        return;
+      }
+      list.innerHTML = visible.map(paper => `<div class="catalog-row">
+        <div><div class="catalog-name">${escapeHtml(paper.title)}</div><div class="catalog-meta">${escapeHtml(paper.year)}　·　${escapeHtml(paper.session)}　·　${escapeHtml(paper.source || "已导入")}</div></div>
+        <div class="catalog-tag">${paper.sections.length} 个部分</div>
+        <div class="catalog-questions">${paper.sections.reduce((sum, section) => sum + section.questions.length, 0)} 道题</div>
+        <div class="catalog-actions">${paper.sourcePdf ? `<a class="btn" href="${escapeHtml(paper.sourcePdf)}" target="_blank" rel="noopener">原卷 PDF</a>` : ""}${paper.answerPdf ? `<a class="btn" href="${escapeHtml(paper.answerPdf)}" target="_blank" rel="noopener">答案 PDF</a>` : ""}<button class="btn btn-primary" data-start-paper="${paper.id}">开始练习</button>${!paper.id.startsWith("cet6-") && paper.id !== "demo-urban-parks" ? `<button class="btn btn-danger" data-delete-paper="${paper.id}" title="删除试卷">删除</button>` : ""}</div>
+      </div>`).join("");
+      list.querySelectorAll("[data-start-paper]").forEach(button => button.onclick = () => startPaper(button.dataset.startPaper));
+      list.querySelectorAll("[data-delete-paper]").forEach(button => button.onclick = () => {
+        const target = papers.find(paper => paper.id === button.dataset.deletePaper);
+        if (!target || !confirm(`删除“${target.title}”？`)) return;
+        papers = papers.filter(paper => paper.id !== target.id); saveLibrary(); renderCatalog();
+      });
+    }
+    function saveAttempt() {
+      const history = readArray(historyKey);
+      history.unshift({
+        id: `attempt-${Date.now()}`,
+        paperId: activePaper()?.id,
+        title: activePaper()?.title,
+        year: activePaper()?.year,
+        section: currentSection()?.title,
+        timestamp: new Date().toISOString(),
+        seconds,
+        correct: allQuestions().filter(q => q.answerStatus === "verified" && q.options?.length && isCorrectAnswer(q, sectionAnswers[q.sectionIndex]?.[q.id])).length,
+        total: allQuestions().filter(q => q.answerStatus === "verified" && q.options?.length).length,
+        answers: sectionAnswers,
+        markedWords: [...markedWords]
+      });
+      localStorage.setItem(historyKey, JSON.stringify(history.slice(0, 100)));
+    }
+    function startPaper(paperId) {
+      const selected = papers.find(paper => paper.id === paperId);
+      if (!selected) return;
+      if (activePaperId && !completedResult && (Object.keys(answers).length || Object.keys(sectionAnswers).length) &&
+          !confirm("开始新试卷会放弃当前未交卷的作答，确定继续吗？")) return;
+      activePaperId = paperId; activeSectionIndex = 0;
+      answers = {}; sectionAnswers = {}; markedWords = new Set(); seconds = 0; submitted = false; completedResult = false; timerRunning = true;
+      loadSection();
+      document.getElementById("catalogView").classList.add("hidden");
+      document.getElementById("sectionView").classList.add("hidden");
+      document.getElementById("practiceView").classList.remove("hidden");
+      document.getElementById("resultsView").classList.add("hidden");
+      document.getElementById("pauseButton").textContent = "暂停计时";
+      setViewActive("papers");
+      renderPassage(); renderQuestions(); renderVocab(); saveState();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+    function loadSection() {
+      const section = currentSection();
+      passage = section?.passage || [];
+      questions = section?.questions || [];
+      answers = { ...(sectionAnswers[activeSectionIndex] || {}) };
+      renderPassage();
+      renderQuestions();
+      renderVocab();
+      saveState();
+    }
+    function renderSectionPage(view) {
+      const host = document.getElementById("sectionView");
+      const history = readArray(historyKey);
+      const title = { overview: "学习概览", mock: "模拟考试", history: "练习记录", vocabulary: "我的生词本", review: "复习计划" }[view] || "学习中心";
+      let content = "";
+      if (view === "overview") {
+        const localWords = [...new Set([...markedWords, ...history.flatMap(item => item.markedWords || [])])];
+        const paperCount = papers.filter(paper => paper.id !== "demo-urban-parks").length;
+        content = `<div class="section-grid"><div class="section-stat"><strong>${paperCount}</strong><span>可练习试卷</span></div><div class="section-stat"><strong>${history.length}</strong><span>完成练习</span></div><div class="section-stat"><strong>${localWords.length}</strong><span>已标记生词</span></div></div><section class="panel" style="margin-top:15px"><div class="panel-head"><b>继续学习</b><button class="btn" data-go="papers">浏览历年真题</button></div>${history.length ? history.slice(0,3).map(item => `<div class="history-row"><div><b>${escapeHtml(item.title)}</b><div class="catalog-meta">${escapeHtml(item.year)} · ${escapeHtml(item.section)} · ${new Date(item.timestamp).toLocaleString()}</div></div><span>${item.total ? `${item.correct}/${item.total} 正确` : "已完成主观作答"}</span></div>`).join("") : `<div class="section-empty">完成一套真题后，这里会显示你的学习概况。</div>`}</section>`;
+      } else if (view === "papers") {
+        document.querySelector('[data-view="papers"]').click(); return;
+      } else if (view === "mock") {
+        content = `<section class="panel"><div class="panel-head"><b>模拟考试</b></div><div class="section-empty">按整套真题计时完成各考试部分。</div><div class="review-list">${papers.filter(paper => paper.id !== "demo-urban-parks").map(paper => `<div class="history-row"><div><b>${escapeHtml(paper.title)}</b><div class="catalog-meta">${escapeHtml(paper.year)} · ${paper.sections.length} 个部分</div></div><button class="btn btn-primary" data-mock="${paper.id}">开始考试</button></div>`).join("")}</div></section>`;
+      } else if (view === "history") {
+        content = `<section class="panel"><div class="panel-head"><b>练习记录</b><button class="btn" id="clearHistory">清空记录</button></div>${history.length ? history.map(item => `<div class="history-row"><div><b>${escapeHtml(item.title)}</b><div class="catalog-meta">${escapeHtml(item.year)} · ${escapeHtml(item.section)} · ${new Date(item.timestamp).toLocaleString()}</div></div><span>${item.total ? `${item.correct}/${item.total} 正确` : "已完成"}</span></div>`).join("") : `<div class="section-empty">还没有练习记录。</div>`}</section>`;
+      } else if (view === "vocabulary" || view === "review") {
+        const allWords = [...new Set([...markedWords, ...history.flatMap(item => item.markedWords || [])])];
+        const knownWords = new Set(readArray("cet6-known-words-v1"));
+        content = `<section class="panel"><div class="panel-head"><b>${view === "review" ? "复习计划" : "我的生词本"}</b><button class="btn" id="exportAllVocab">导出生词表</button></div>${allWords.length ? allWords.map(word => {
+          const data = wordInfo(word);
+          return knownWords.has(word) && view === "review" ? "" : `<div class="word-entry" style="padding:14px 18px"><div class="word-entry-head"><div><strong>${escapeHtml(word)}</strong><span class="phonetic">${escapeHtml(data.phonetic || "")}</span></div><button class="btn" data-forgot="${escapeHtml(word)}">${knownWords.has(word) ? "撤销掌握" : "已掌握"}</button></div><p>${escapeHtml(data.meaning || "导入词汇，释义待补充")}</p><p>近义词：${escapeHtml((data.synonyms || []).join(" · ") || "待补充")}</p></div>`;
+        }).join("") : `<div class="section-empty">还没有标记过生词。开始一篇阅读，在原文中点选单词即可加入。</div>`}</section>`;
+      }
+      host.innerHTML = `<div class="page-head section-hero"><div><div class="crumb">学习中心　/　${title}</div><h1>${title}</h1><p>${view === "overview" ? "查看练习进度、试卷与词汇积累。" : ""}</p></div></div>${content}`;
+      host.classList.remove("hidden");
+      document.getElementById("catalogView").classList.add("hidden");
+      document.getElementById("practiceView").classList.add("hidden");
+      document.getElementById("resultsView").classList.add("hidden");
+      host.querySelectorAll("[data-go]").forEach(button => button.onclick = () => setView(button.dataset.go));
+      host.querySelectorAll("[data-mock]").forEach(button => button.onclick = () => startPaper(button.dataset.mock));
+      host.querySelectorAll("[data-forgot]").forEach(button => button.onclick = () => {
+        const word = button.dataset.forgot;
+        const known = new Set(readArray("cet6-known-words-v1"));
+        if (known.has(word)) known.delete(word); else known.add(word);
+        localStorage.setItem("cet6-known-words-v1", JSON.stringify([...known]));
+        setView(view);
+      });
+      const clear = host.querySelector("#clearHistory");
+      if (clear) clear.onclick = () => {
+        if (!confirm("确定清空所有本机练习记录吗？")) return;
+        localStorage.removeItem(historyKey); renderSectionPage("history");
+      };
+      const exportButton = host.querySelector("#exportAllVocab");
+      if (exportButton) exportButton.onclick = () => exportWordList([...new Set([...markedWords, ...history.flatMap(item => item.markedWords || [])])]);
+    }
+    function setView(view) {
+      setViewActive(view);
+      if (view === "papers") {
+        document.getElementById("sectionView").classList.add("hidden");
+        document.getElementById("practiceView").classList.add("hidden");
+        document.getElementById("resultsView").classList.add("hidden");
+        document.getElementById("catalogView").classList.remove("hidden");
+        renderCatalog();
+      } else renderSectionPage(view);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+    function setViewActive(view) {
+      document.querySelectorAll(".nav-item[data-view]").forEach(item => item.classList.toggle("active", item.dataset.view === view));
+    }
+    function wordInfo(word) {
+      try {
+        const cached = JSON.parse(localStorage.getItem(wordLookupCache) || "{}");
+        return cached[word] || words[word] || {};
+      } catch { return words[word] || {}; }
+    }
+    function exportWordList(wordList) {
+      if (!wordList.length) { showToast("当前没有可导出的生词"); return; }
+      const rows = ["单词\t音标\t中文释义\t常见近义词", ...wordList.map(word => {
+        const entry = wordInfo(word);
+        return `${word}\t${entry.phonetic || ""}\t${entry.meaning || ""}\t${(entry.synonyms || []).join(", ")}`;
+      })];
+      const blob = new Blob(["\ufeff" + rows.join("\n")], { type: "text/tab-separated-values;charset=utf-8" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob); link.download = "CET6-生词表.tsv"; link.click(); URL.revokeObjectURL(link.href);
+    }
+    function importPaperFile(file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const parsed = JSON.parse(reader.result);
+          const incoming = (Array.isArray(parsed) ? parsed : [parsed]).map(normalizePaper);
+          papers.push(...incoming); saveLibrary(); renderCatalog();
+          showToast(`已导入 ${incoming.length} 套试卷`);
+        } catch (error) { showToast(`导入失败：${error.message || "JSON 格式不正确"}`); }
+      };
+      reader.readAsText(file, "utf-8");
+    }
+    function downloadPaperTemplate() {
+      const template = {
+        title: "2024 年 12 月 CET-6 真题（第 1 套）",
+        year: "2024",
+        session: "12 月第一套",
+        source: "请填写试卷来源",
+        sections: [
+          {
+            title: "仔细阅读 · Passage 1",
+            type: "reading",
+            passageTitle: "文章标题",
+            passage: ["文章第一段。", "文章第二段。"],
+            questions: [
+              { id: 1, type: "choice", text: "题干", options: ["选项 A", "选项 B", "选项 C", "选项 D"], answer: "B", explanation: "答案解析" }
+            ]
+          },
+          {
+            title: "翻译",
+            type: "translation",
+            instructions: "将以下中文翻译成英文。",
+            passage: [],
+            questions: [
+              { id: 1, type: "written", text: "待翻译的中文材料", answer: "参考译文", explanation: "翻译要点" }
+            ]
+          }
+        ]
+      };
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(new Blob([JSON.stringify(template, null, 2)], { type: "application/json" }));
+      link.download = "cet6-paper-template.json"; link.click(); URL.revokeObjectURL(link.href);
+    }
+
+    function renderPassage() {
+      const section = currentSection();
+      const paper = activePaper();
+      const source = section?.sourcePdf || paper?.sourcePdf || "";
+      const firstPage = Math.max(1, section?.page || 1);
+      const lastPage = Math.max(firstPage, section?.pageEnd || firstPage);
+      pdfPage = Math.min(Math.max(pdfPage, firstPage), lastPage);
+      document.getElementById("paperViewerTitle").textContent = `${section?.title || "试卷原文"} · 原文与 PDF`;
+      document.getElementById("passageMeta").textContent = `${paper?.title || ""} · 原卷第 ${firstPage}-${lastPage} 页`;
+      document.getElementById("pdfPageLabel").textContent = `第 ${pdfPage} 页 / 本部分 ${firstPage}-${lastPage} 页`;
+      document.getElementById("pdfPrev").disabled = pdfPage <= firstPage;
+      document.getElementById("pdfNext").disabled = pdfPage >= lastPage;
+      const rawText = section?.passage?.length ? section.passage.join("\n\n") : section?.prompt || "";
+      passageEl.innerHTML = rawText ? rawText.split(/\n\s*\n/).map(paragraph => `<p>${paragraph.split(/(\b[\w'-]+\b)/g).map(token => {
+        const key = token.toLowerCase().replace(/['-].*$/, "");
+        if (!/^[a-z][a-z'-]*$/i.test(token)) return escapeHtml(token);
+        return `<span class="word${markedWords.has(key) ? " marked" : ""}" data-word="${escapeHtml(key)}" tabindex="0" role="button" aria-label="查看 ${escapeHtml(key)} 的释义">${escapeHtml(token)}</span>`;
+      }).join("")}</p>`).join("") : "<p>请依据原卷页面作答。</p>";
+      document.getElementById("paperFrame").src = source ? `${source}#page=${pdfPage}&view=FitH` : "about:blank";
+    }
+    function renderQuestions() {
+      const sectionTitle = currentSection()?.title || "选择题";
+      const sectionNav = document.getElementById("sectionSwitcher");
+      sectionNav.innerHTML = allSections().map((section, index) => {
+        const count = section.questions?.length || 0;
+        const savedAnswers = sectionAnswers[index] || (index === activeSectionIndex ? answers : {});
+        const answered = Object.values(savedAnswers).filter(value => value !== "").length;
+        return `<button class="section-choice${index === activeSectionIndex ? " active" : ""}" data-section="${index}" aria-current="${index === activeSectionIndex ? "step" : "false"}">${escapeHtml(section.title.trim())} · ${answered}/${count}</button>`;
+      }).join("");
+      sectionNav.querySelectorAll("[data-section]").forEach(button => button.addEventListener("click", () => {
+        const nextIndex = Number(button.dataset.section);
+        if (nextIndex === activeSectionIndex) return;
+        sectionAnswers[activeSectionIndex] = { ...answers };
+        activeSectionIndex = nextIndex;
+        pdfPage = currentSection()?.page || 1;
+        loadSection();
+        saveState();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }));
+      document.querySelector("#practiceView .paper-title").textContent = activePaper()?.title || "CET-6 在线练习";
+      document.querySelector("#practiceView .paper-meta").textContent = `${sectionTitle}　·　共 ${questions.length} 题`;
+      document.querySelector("#practiceView .panel-head .panel-title").textContent = sectionTitle;
+      let instructions = document.getElementById("sectionInstructions");
+      if (!instructions) {
+        instructions = document.createElement("div");
+        instructions.id = "sectionInstructions";
+        instructions.className = "import-help hidden";
+        document.querySelector("#practiceView .main-column").prepend(instructions);
+      }
+      instructions.textContent = currentSection()?.instructions || "";
+      instructions.classList.toggle("hidden", !currentSection()?.instructions);
+      document.querySelector("#practiceView .panel-kicker").textContent = "原始试卷 PDF";
+      const passagePanel = document.getElementById("paperViewer").closest(".panel");
+      passagePanel.classList.toggle("hidden", !activePaper()?.sourcePdf);
+      const questionsTitle = document.querySelectorAll("#practiceView .main-column .panel")[1].querySelector(".panel-title");
+      questionsTitle.textContent = questions.some(question => question.options?.length) ? "题目" : "作答";
+      document.querySelector("#practiceView .main-column .panel .panel-kicker").textContent = questions.length ? `共 ${questions.length} 题` : "本部分无客观题";
+      document.querySelector("#practiceView .side-panel .panel:last-child .side-content").innerHTML =
+        `<div>试卷：${escapeHtml(activePaper()?.year || "未选择")}</div><div>题型：${escapeHtml(sectionTitle)}</div><div>题目：${questions.length} 道</div><div>答题：<strong id="answeredCount" style="color:#253943">0 / 0</strong></div><div>标记词汇：<strong id="markedCount" style="color:#a87117">${markedWords.size} 个</strong></div>`;
+      questionList.innerHTML = `${currentSection()?.prompt ? `<div class="import-help">${escapeHtml(currentSection().prompt)}</div>` : ""}${questions.map(q => `
+        <div class="question" id="question-${q.id}">
+          <div class="q-title"><span class="q-num">${q.displayNumber || q.id}</span><span>${escapeHtml(q.text)}</span></div>
+          ${q.type === "word_bank" ? `<div class="import-help">从下方共享词库中选择一个字母；每个词只能使用一次。</div>` : q.type === "choice_input" ? `<div class="import-help">本题选项未能从文本中完整提取，请对照原卷 PDF 输入选项字母；本题不参与自动判分。</div>` : ""}
+          ${q.type === "word_bank" ? `<select class="word-bank-answer" data-answer="${q.id}">${wordBankOptions(q, answers[q.id] || "")}</select>` : q.type === "matching" ? `<input class="match-answer" data-answer="${q.id}" maxlength="1" list="paragraphOptions" placeholder="输入段落字母，如 A" value="${escapeHtml(answers[q.id] || "")}"><datalist id="paragraphOptions">${q.optionLabels.map(label => `<option value="${label}">`).join("")}</datalist>` : q.type === "choice_input" ? `<input class="match-answer" data-answer="${q.id}" maxlength="1" list="choiceLabels" placeholder="原卷选项不完整，请输入 A、B、C 或 D" value="${escapeHtml(answers[q.id] || "")}"><datalist id="choiceLabels"><option value="A"><option value="B"><option value="C"><option value="D"></datalist>` : q.options?.length ? `<div class="options">${q.options.map((option, i) => {
+            const label = q.optionLabels[i] || String.fromCharCode(65 + i);
+            const selected = answers[q.id] === label;
+            return `<label class="option${selected ? " selected" : ""}"><input type="radio" name="q${q.id}" data-answer="${q.id}" value="${label}" ${selected ? "checked" : ""}><span>${label}${option ? `. ${escapeHtml(option)}` : ""}</span></label>`;
+          }).join("")}</div>` : `<textarea class="write-answer" data-answer="${q.id}" placeholder="在此输入你的作答">${escapeHtml(answers[q.id] || "")}</textarea>`}
+        </div>`).join("")}${activePaper()?.answerPdf ? `<div class="import-help"><a href="${escapeHtml(activePaper().answerPdf)}#page=${Math.max(1, currentSection()?.pageEnd || 1)}" target="_blank" rel="noopener">打开答案与解析 PDF</a>${questions.some(q => q.answerStatus !== "verified") ? " · 未核验答案不参与自动判分" : ""}</div>` : ""}`;
+      questionGrid.innerHTML = questions.map(q => `<button class="q-jump${answers[q.id] !== undefined && answers[q.id] !== "" ? " answered" : ""}" data-jump="${q.id}" aria-label="第 ${q.displayNumber || q.id} 题">${q.displayNumber || q.id}</button>`).join("");
+      document.querySelectorAll(".option").forEach(label => {
+        label.addEventListener("click", () => {
+          const input = label.querySelector("input");
+          const question = questions.find(q => q.id === input.dataset.answer);
+          if (input.disabled) return;
+          answers[question.id] = input.value;
+          renderQuestions();
+          updateProgress();
+          saveState();
+        });
+      });
+      document.querySelectorAll(".write-answer").forEach(textarea => textarea.addEventListener("input", () => {
+        answers[textarea.dataset.answer] = textarea.value;
+        updateProgress();
+        saveState();
+      }));
+      document.querySelectorAll(".match-answer").forEach(input => input.addEventListener("input", () => {
+        answers[input.dataset.answer] = input.value.trim().toUpperCase().slice(0, 1);
+        input.value = answers[input.dataset.answer];
+        updateProgress();
+        saveState();
+      }));
+      document.querySelectorAll(".word-bank-answer").forEach(select => select.addEventListener("change", () => {
+        const selectedLabel = select.value;
+        if (selectedLabel && questions.some(item => item.type === "word_bank" && item.id !== select.dataset.answer && answers[item.id] === selectedLabel)) {
+          select.value = answers[select.dataset.answer] || "";
+          showToast("每个词库选项只能使用一次");
+          return;
+        }
+        answers[select.dataset.answer] = selectedLabel;
+        renderQuestions();
+        updateProgress();
+        saveState();
+      }));
+      document.querySelectorAll(".q-jump").forEach(button => button.addEventListener("click", () => {
+        document.getElementById(`question-${button.dataset.jump}`).scrollIntoView({ behavior: "smooth", block: "center" });
+      }));
+      updateProgress();
+    }
+    function updateProgress() {
+      const count = questions.filter(q => answers[q.id] !== undefined && answers[q.id] !== "").length;
+      document.getElementById("progressText").textContent = `${count} / ${questions.length}`;
+      document.getElementById("progressFill").style.width = `${questions.length ? count / questions.length * 100 : 0}%`;
+      document.getElementById("answeredCount").textContent = `${count} / ${questions.length}`;
+      document.querySelectorAll("#sectionSwitcher [data-section]").forEach(button => {
+        const index = Number(button.dataset.section);
+        const section = allSections()[index];
+        const sectionAnswersForCount = index === activeSectionIndex ? answers : (sectionAnswers[index] || {});
+        const answered = Object.values(sectionAnswersForCount).filter(value => value !== "").length;
+        button.textContent = `${section.title.trim()} · ${answered}/${section.questions.length}`;
+      });
+    }
+    function renderVocab() {
+      const globalVocab = [...new Set([...markedWords, ...readArray(historyKey).flatMap(item => item.markedWords || [])])];
+      document.getElementById("vocabCount").textContent = globalVocab.length;
+      const markedDisplay = document.getElementById("markedCount");
+      if (markedDisplay) markedDisplay.textContent = `${markedWords.size} 个`;
+      const box = document.getElementById("vocabPreview");
+      if (!box) return;
+      if (!markedWords.size) {
+        box.innerHTML = `<div class="vocab-empty">点击阅读原文中标为可查的词语<br>即可加入本次生词表。</div>`;
+        return;
+      }
+      box.innerHTML = [...markedWords].map(word => {
+        const entry = wordInfo(word);
+        return `<div class="vocab-row"><div><div class="vocab-word">${escapeHtml(word)}</div><div class="vocab-meaning">${escapeHtml(entry.meaning || "释义待补充")}</div></div><button class="remove-word" data-remove="${escapeHtml(word)}" aria-label="移除 ${escapeHtml(word)}">×</button></div>`;
+      }).join("");
+      box.querySelectorAll("[data-remove]").forEach(button => button.addEventListener("click", () => {
+        markedWords.delete(button.dataset.remove);
+        renderPassage(); renderVocab(); saveState();
+      }));
+    }
+    function openPopover(word, anchor) {
+      const cached = JSON.parse(localStorage.getItem(wordLookupCache) || "{}");
+      const data = { ...(cached[word] || words[word] || {}) };
+      data.synonyms = data.synonyms || [];
+      if (!data.meaning || !data.phonetic) {
+        data.meaning = data.meaning || "正在查询中文释义…";
+        data.phonetic = data.phonetic || "正在查询音标…";
+      }
+      popover.innerHTML = `<div class="popover-top"><div><div class="popover-word">${escapeHtml(word)}</div><div class="phonetic">${escapeHtml(data.phonetic)}</div></div><button class="popover-close" aria-label="关闭">×</button></div><div class="meaning">${escapeHtml(data.meaning)}</div><div class="synonyms">常见近义词：${escapeHtml(data.synonyms.join(" · ") || "暂无")}</div><button class="btn ${markedWords.has(word) ? "" : "btn-primary"} popover-action" id="toggleWord">${markedWords.has(word) ? "已加入生词表 · 点击移除" : "＋ 标记为生词"}</button>`;
+      popover.classList.remove("hidden");
+      const rect = anchor.getBoundingClientRect();
+      const width = Math.min(300, window.innerWidth - 24);
+      const left = Math.max(12, Math.min(rect.left, window.innerWidth - width - 12));
+      const top = rect.bottom + 8 + 165 < window.innerHeight ? rect.bottom + 8 : Math.max(12, rect.top - 190);
+      popover.style.left = `${left}px`; popover.style.top = `${top}px`;
+      popover.querySelector(".popover-close").onclick = () => popover.classList.add("hidden");
+      popover.querySelector("#toggleWord").onclick = () => {
+        if (markedWords.has(word)) markedWords.delete(word); else markedWords.add(word);
+        renderPassage(); renderVocab(); saveState(); renderCatalog();
+        popover.classList.add("hidden");
+        showToast(markedWords.has(word) ? `已将 ${word} 加入生词表` : `已从生词表移除 ${word}`);
+      };
+      if (!cached[word] && !words[word]) lookupWord(word, anchor);
+    }
+    async function lookupWord(word, anchor) {
+      try {
+        const [dictionaryResponse, translationResponse] = await Promise.all([
+          fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`),
+          fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(word)}&langpair=en|zh-CN`)
+        ]);
+        if (!dictionaryResponse.ok) throw new Error("dictionary unavailable");
+        const dictionary = await dictionaryResponse.json();
+        const entry = dictionary[0];
+        const phonetic = entry.phonetic || entry.phonetics?.find(item => item.text)?.text || "";
+        const meanings = entry.meanings || [];
+        const synonyms = [...new Set(meanings.flatMap(item => item.synonyms || []))].slice(0, 6);
+        const meaning = translationResponse.ok ? (await translationResponse.json()).responseData?.translatedText || "" : "";
+        const cache = JSON.parse(localStorage.getItem(wordLookupCache) || "{}");
+        cache[word] = { phonetic, meaning, synonyms };
+        localStorage.setItem(wordLookupCache, JSON.stringify(cache));
+        if (popover.classList.contains("hidden")) return;
+        openPopover(word, anchor);
+      } catch {
+        if (!popover.classList.contains("hidden")) {
+          popover.querySelector(".meaning").textContent = "在线词典暂不可用，可稍后重试；该词仍可加入生词本。";
+          popover.querySelector(".phonetic").textContent = "暂无音标";
+        }
+      }
+    }
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message; toast.classList.remove("hidden");
+      clearTimeout(toastTimeout); toastTimeout = setTimeout(() => toast.classList.add("hidden"), 2100);
+    }
+    function formatTime(value) { return `${String(Math.floor(value/60)).padStart(2,"0")}:${String(value%60).padStart(2,"0")}`; }
+    function saveState() {
+      if (!activePaperId) return;
+      sectionAnswers[activeSectionIndex] = { ...answers };
+      localStorage.setItem("cet6-practice-state", JSON.stringify({ activePaperId, activeSectionIndex, sectionAnswers, answers, markedWords: [...markedWords], seconds, submitted, completedResult }));
+    }
+    function restoreState() {
+      try {
+        const state = JSON.parse(localStorage.getItem("cet6-practice-state") || "{}");
+        answers = state.answers || {};
+        sectionAnswers = state.sectionAnswers || {};
+        markedWords = new Set(state.markedWords || []);
+        seconds = state.seconds || 0;
+        submitted = Boolean(state.submitted);
+        completedResult = Boolean(state.completedResult);
+        activePaperId = state.activePaperId || "";
+        activeSectionIndex = Number(state.activeSectionIndex || 0);
+      } catch { answers = {}; markedWords = new Set(); seconds = 0; }
+    }
+    function openConfirm() {
+      const answered = questions.filter(q => answers[q.id] !== undefined && answers[q.id] !== "").length;
+      sectionAnswers[activeSectionIndex] = { ...answers };
+      const unanswered = questions.length - answered;
+      const nextLabel = activeSectionIndex < allSections().length - 1 ? "提交本部分并继续" : "确认整套交卷";
+      document.getElementById("modalHost").innerHTML = `<div class="overlay" id="overlay"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle"><h2 id="confirmTitle">${activeSectionIndex < allSections().length - 1 ? "提交当前部分？" : "提交整套试卷？"}</h2><p>已作答 ${answered} / ${questions.length} 题${unanswered ? `，还有 ${unanswered} 题未完成` : ""}。${activeSectionIndex < allSections().length - 1 ? "确认后保存本部分并进入下一部分；也可使用上方导航直接切换部分。" : "确认后结束整套练习并查看结果。"}</p><div class="modal-actions"><button class="btn" id="cancelSubmit">返回作答</button><button class="btn btn-primary" id="confirmSubmit">${nextLabel}</button></div></div></div>`;
+      document.getElementById("cancelSubmit").onclick = () => document.getElementById("modalHost").innerHTML = "";
+      document.getElementById("overlay").addEventListener("click", event => { if (event.target.id === "overlay") document.getElementById("modalHost").innerHTML = ""; });
+      document.getElementById("confirmSubmit").onclick = submitSection;
+    }
+    function submitSection() {
+      const sections = allSections();
+      if (activeSectionIndex < sections.length - 1) {
+        activeSectionIndex++;
+        pdfPage = currentSection()?.page || 1;
+        loadSection();
+        saveState();
+        document.getElementById("modalHost").innerHTML = "";
+        showToast(`进入 ${currentSection().title}`);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        return;
+      }
+      finishExam();
+    }
+    function previousSection() {
+      if (activeSectionIndex <= 0) return;
+      sectionAnswers[activeSectionIndex] = { ...answers };
+      activeSectionIndex--;
+      pdfPage = currentSection()?.page || 1;
+      loadSection();
+      saveState();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+    function finishExam() {
+      const shouldRecordAttempt = !completedResult;
+      submitted = true; timerRunning = false; clearInterval(timerInterval);
+      sectionAnswers[activeSectionIndex] = { ...answers };
+      const all = allQuestions();
+      const objective = all.filter(q => q.options?.length);
+      const scored = objective.filter(q => q.answerStatus === "verified");
+      const correct = scored.filter(q => {
+        const response = sectionAnswers[q.sectionIndex]?.[q.id];
+        return isCorrectAnswer(q, response);
+      }).length;
+      const score = scored.length ? Math.round(correct / scored.length * 100) : null;
+      completedResult = true;
+      if (shouldRecordAttempt) saveAttempt();
+      saveState();
+      document.getElementById("modalHost").innerHTML = "";
+      document.getElementById("practiceView").classList.add("hidden");
+      const results = document.getElementById("resultsView");
+      results.classList.remove("hidden");
+      results.innerHTML = `
+        <div class="page-head"><div><div class="crumb">学习中心　/　练习结果</div><h1>练习结果</h1><div class="subtitle">本次作答已完成，标记的词汇已整理到词表。</div></div><div class="head-actions"><button class="btn" id="resultRestart">再练一次</button></div></div>
+        <section class="result-banner"><div><div class="score-ring">${score === null ? "—" : score}</div><div class="score-caption">${score === null ? "答案待核验" : "已核验客观题"}</div></div><div class="result-copy"><h2>${score !== null && score >= 80 ? "完成得不错" : "练习已完成"}</h2><p>已核验题目答对 ${correct} / ${scored.length}；其余答案请查看答案与解析 PDF。${activePaper()?.answerPdf ? ` <a href="${escapeHtml(activePaper().answerPdf)}" target="_blank" rel="noopener">打开答案与解析</a>` : ""}</p></div><div class="result-stats"><div><strong>${formatTime(seconds)}</strong>用时</div><div><strong>${all.length}</strong>总题数</div><div><strong>${markedWords.size}</strong>个生词</div></div></section>
+        <div class="review"><section class="panel"><div class="panel-head"><span class="panel-title">答题回顾</span><span class="panel-kicker">正确答案及解析</span></div><div class="review-list">${all.map((q, index) => {
+          const response = sectionAnswers[q.sectionIndex]?.[q.id];
+          const correctAnswer = q.answerStatus === "verified" && isCorrectAnswer(q, response);
+          const status = q.answerStatus !== "verified" ? (response === undefined ? "未作答 · 待自查" : "已作答 · 待自查") : (response === undefined ? "未作答" : correctAnswer ? "回答正确" : `正确答案 ${q.answer}`);
+          return `<div class="review-item"><div><b>${escapeHtml(q.displayNumber || q.id)}</b><div class="catalog-meta">${escapeHtml(q.explanation || "")}</div></div><span class="review-status">${status}</span></div>`;
+        }).join("")}</div></section>
+        <section class="panel"><div class="panel-head"><span class="panel-title">本次生词表</span><button class="btn" id="resultExport">导出</button></div><div class="word-list">${markedWords.size ? [...markedWords].map(word => {
+          const entry = wordInfo(word);
+          return `<div class="word-entry"><div class="word-entry-head"><div><strong>${escapeHtml(word)}</strong><span class="phonetic">${escapeHtml(entry.phonetic || "")}</span></div></div><p>${escapeHtml(entry.meaning || "释义待补充")}</p><p>近义词：${escapeHtml((entry.synonyms || []).join(" · ") || "待补充")}</p></div>`;
+        }).join("") : `<div class="vocab-empty">本次没有标记生词。返回练习可继续查看原文词汇。</div>`}</div></section></div>`;
+      results.querySelector("#resultRestart").onclick = () => setView("papers");
+      results.querySelector("#resultExport").onclick = exportVocab;
+      results.querySelectorAll("[data-review]").forEach(button => button.onclick = () => {
+        const q = questions.find(item => item.id === Number(button.dataset.review));
+        showToast(`第 ${q.id} 题：${q.options[q.answer]}`);
+      });
+      renderCatalog();
+      const historyNav = document.querySelector('[data-view="history"]');
+      if (historyNav) historyNav.title = "练习记录";
+      saveState();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+    function exportVocab() {
+      exportWordList([...markedWords]);
+      showToast("词表已导出");
+    }
+    function resetExam() {
+      if (!confirm("重新开始会清除本次答题和标词记录，确定继续吗？")) return;
+      answers = {}; sectionAnswers = {}; markedWords = new Set(); seconds = 0; submitted = false; completedResult = false; timerRunning = true;
+      localStorage.removeItem("cet6-practice-state");
+      setView("papers");
+    }
+    document.addEventListener("click", event => {
+      const word = event.target.closest("[data-word]");
+      if (word) { openPopover(word.dataset.word, word); return; }
+      if (!event.target.closest("#popover")) popover.classList.add("hidden");
+    });
+    document.getElementById("submitButton").onclick = openConfirm;
+    document.getElementById("previousSectionButton").onclick = previousSection;
+    document.getElementById("pdfPrev").onclick = () => { pdfPage--; renderPassage(); };
+    document.getElementById("pdfNext").onclick = () => { pdfPage++; renderPassage(); };
+    document.getElementById("pauseButton").onclick = event => {
+      timerRunning = !timerRunning;
+      event.currentTarget.textContent = timerRunning ? "暂停计时" : "继续计时";
+      showToast(timerRunning ? "计时已继续" : "计时已暂停");
+    };
+    document.getElementById("saveButton").onclick = () => { saveState(); showToast("答题进度已暂存在本机"); };
+    document.getElementById("exportVocab").onclick = exportVocab;
+    document.getElementById("resetButton").onclick = resetExam;
+    document.getElementById("markAllHint").onclick = () => showToast("点击原文中词语即可标记；当前内置词典包含示例阅读词汇");
+    document.querySelectorAll(".nav-item[data-view]").forEach(item => item.addEventListener("click", () => {
+      const nextView = item.dataset.view;
+      if (!document.getElementById("practiceView").classList.contains("hidden") && !completedResult) saveState();
+      setView(nextView);
+    }));
+    document.getElementById("yearFilter").addEventListener("change", renderCatalog);
+    document.getElementById("paperSearch").addEventListener("input", renderCatalog);
+    document.getElementById("helpButton").onclick = () => showToast("选择年份筛选真题；开始后按部分作答并逐部分提交。客观题依据标准答案自动判分，主观题需按参考答案自查。");
+    document.querySelectorAll(".section-tab").forEach(tab => tab.onclick = () => {
+      document.querySelectorAll(".section-tab").forEach(item => item.classList.toggle("active", item === tab));
+      document.getElementById("questionCard").classList.toggle("hidden", tab.dataset.tab !== "questions");
+      document.getElementById("vocabCard").classList.toggle("hidden", tab.dataset.tab !== "vocabulary");
+    });
+    async function initialize() {
+      try {
+        const response = await fetch("./site-data/papers/index.json");
+        if (!response.ok) throw new Error(`题库加载失败：${response.status}`);
+        const library = await response.json();
+        if (!Array.isArray(library)) throw new Error("题库格式不正确");
+        papers = library.map(paper => normalizePaper(paper, true));
+      } catch (error) {
+        showToast("公共题库暂不可用，请刷新页面重试");
+        console.error(error);
+      }
+      try {
+        const savedPapers = JSON.parse(localStorage.getItem(papersKey) || "[]");
+        if (Array.isArray(savedPapers)) papers.push(...savedPapers);
+      } catch { localStorage.removeItem(papersKey); }
+      restoreState();
+      const savedState = JSON.parse(localStorage.getItem("cet6-practice-state") || "{}");
+      if (savedState.activePaperId && papers.some(paper => paper.id === savedState.activePaperId)) {
+        activePaperId = savedState.activePaperId;
+        activeSectionIndex = Math.min(savedState.activeSectionIndex || 0, (activePaper()?.sections.length || 1) - 1);
+        sectionAnswers = savedState.sectionAnswers || {};
+        passage = currentSection()?.passage || [];
+        questions = currentSection()?.questions || [];
+        answers = { ...(sectionAnswers[activeSectionIndex] || savedState.answers || {}) };
+        if (completedResult) {
+          document.getElementById("catalogView").classList.add("hidden");
+          document.getElementById("practiceView").classList.add("hidden");
+          finishExam();
+        } else {
+          document.getElementById("catalogView").classList.add("hidden");
+          document.getElementById("practiceView").classList.remove("hidden");
+          setViewActive("papers");
+        }
+      } else {
+        activePaperId = "";
+        setView("papers");
+      }
+      renderPassage(); renderQuestions(); renderVocab();
+      renderCatalog();
+      document.getElementById("timer").textContent = formatTime(seconds);
+      timerInterval = setInterval(() => {
+        if (timerRunning && !submitted) {
+          seconds++;
+          document.getElementById("timer").textContent = formatTime(seconds);
+          if (activePaperId && !completedResult) saveState();
+        }
+      }, 1000);
+    }
+    initialize();
+  </script>
+</body>
+</html>
